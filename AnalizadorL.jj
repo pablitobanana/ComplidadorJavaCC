@@ -22,24 +22,26 @@ public static void agregar(String id, String tipoDato, String categoria, String 
     tabla.put(id,vr);
 }
 
-public static void busqueda(String id){
-if (tabla.containsKey(id)) {
-    Variable varEncontrada = (Variable) tabla.get(id);
-    System.out.println("Encontrada: "+varEncontrada.toString());
-}else{
-     System.out.println("No existe");
-}
-}
+// public static void busqueda(String id){
+// if (tabla.containsKey(id)) {
+//     Variable varEncontrada = (Variable) tabla.get(id);
+//     System.out.println("Encontrada: "+varEncontrada.toString());
+// }else{
+//      System.out.println("No existe");
+// }
+// }
 
-public static void eliminar(String id){
-    tabla.remove(id);
-}
+// public static void eliminar(String id){
+//     tabla.remove(id);
+// }
 
 public static void printTable(){
-    System.out.println("----------------------");
-    System.out.println("TABLA DE SIMBOLOS: ");
+    System.out.println("TABLA DE SIMBOLOS");
+    System.out.println("******************************");
+    System.out.println("ID | TIPO | Categoria | Tamaño");
+    System.out.println("******************************");
     for (String i : tabla.keySet()) {
-        System.out.println(tabla.get(i));
+        System.out.println(tabla.get(i).toString());
     }
 }
 
@@ -55,10 +57,10 @@ public static class Variable {
     String getId(){
         return id;
     }
-    String getDataType(){
+    String getTipoDato(){
         return tipoDato;
     }
-    String getCategory(){
+    String getCategoria(){
         return categoria;
     }
     String getSize(){
@@ -66,7 +68,7 @@ public static class Variable {
     }
 
     public String toString(){
-    return getId()+ "-" + getDataType()+ "-" + getCategory()+ "-" + getSize();        
+    return getId()+ " | " + getTipoDato()+ " | " + getCategoria()+ " | " + getSize();        
   }
 }
 }
@@ -267,13 +269,13 @@ void Program ():{}
 }
 void MainClass ():{}
 {
-	<PCLASE> <ID> {String image=token.image; agregar(image, "void", "clase", "0");} <LLAVEA> <PPUBLICO> <PSTATIC> <PMETODO> <PMAIN> <PARENTESISA> <PCADENA> <CORCHETEA> <CORCHETEC> <ID>{image=token.image;agregar(image, "void", "arreglo", "0");} <PARENTESISC> <LLAVEA> Statement() <LLAVEC> <LLAVEC>
+	<PCLASE> <ID> {String image = token.image; agregar(image, "void", "clase", "0");} <LLAVEA> <PPUBLICO> <PSTATIC> <PMETODO> <PMAIN> <PARENTESISA> <PCADENA> <CORCHETEA> <CORCHETEC> <ID>{image=token.image;agregar(image, "void", "arreglo", "0");} <PARENTESISC> <LLAVEA> Statement() <LLAVEC> <LLAVEC>
 }
 void ClassDeclaration():{}
 {
-	<PCLASE> <ID> {String image=token.image;agregar(image, "void", "clase", "0");}( <PEXTENDS> <ID> )? <LLAVEA> ( VarDeclaration() )* ( MethodDeclaration() )* <LLAVEC>
+	<PCLASE> <ID> {String image=token.image; agregar(image, "void", "clase", "0");}( <PEXTENDS> <ID> )? <LLAVEA> ( VarDeclaration() )* ( MethodDeclaration() )* <LLAVEC>
 }
-void VarDeclaration():{String type=""; String image; int tam=0; String category="";}
+void VarDeclaration():{String type=""; String image; String tam="0"; String category="";}
 {
 	type=Type() <ID> {image=token.image;
 if(type.equals("arreglo-float")){category="arreglo"; agregar(image, "float", "arreglo", tam+"");} 
@@ -283,7 +285,7 @@ else{ category="variable"; agregar(image, type, "variable", "0"); }
 }
 void MethodDeclaration():{String type; int tam=0;}
 {
-	<PPUBLICO> type=Type() <ID> {String imageMethod=token.image;}<PARENTESISA> ( type=Type() <ID> {String image=token.image;
+	<PPUBLICO> type=Type() <ID> {String imageMethod=token.image;}<PARENTESISA> (type=Type() <ID> {String image=token.image;
 if(type.equals("arreglo-float"))agregar(image, "float", "arreglo", "0"); 
 else if(type.equals("arreglo-int"))agregar(image, "int", "arreglo", "0");
 else agregar(image, type, "variable", "0"); 
