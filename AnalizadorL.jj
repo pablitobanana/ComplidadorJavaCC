@@ -1,0 +1,335 @@
+options {
+Ignore_Case = false;
+STATIC=false;
+
+}
+PARSER_BEGIN(AnalizadorL)
+import java.io.*;
+import java.util.*;
+import java.lang.*;
+	public class AnalizadorL{
+		static Hashtable<String,Object> tabla = new Hashtable<String,Object>();
+
+		public static void main (String[] args) throws ParseException{
+		AnalizadorL anLex = new AnalizadorL(System.in);
+		anLex.Program();
+    printTable();
+		System.out.println("Analisis Terminado.");
+		}
+
+public static void agregar(String id, String tipoDato, String categoria, String size){
+    Variable vr = new Variable(id , tipoDato, categoria, size);
+    tabla.put(id,vr);
+}
+
+public static void busqueda(String id){
+if (tabla.containsKey(id)) {
+    Variable varEncontrada = (Variable) tabla.get(id);
+    System.out.println("Encontrada: "+varEncontrada.toString());
+}else{
+     System.out.println("No existe");
+}
+}
+
+public static void eliminar(String id){
+    tabla.remove(id);
+}
+
+public static void printTable(){
+    System.out.println("----------------------");
+    System.out.println("TABLA DE SIMBOLOS: ");
+    for (String i : tabla.keySet()) {
+        System.out.println(tabla.get(i));
+    }
+}
+
+public static class Variable {
+ String id, tipoDato, categoria, size;
+	public Variable(String id, String tipoDato, String categoria, String size){
+		this.id=id;
+		this.tipoDato=tipoDato;
+        this.categoria=categoria;
+        this.size=size;
+	}
+
+    String getId(){
+        return id;
+    }
+    String getDataType(){
+        return tipoDato;
+    }
+    String getCategory(){
+        return categoria;
+    }
+    String getSize(){
+        return size;
+    }
+
+    public String toString(){
+    return getId()+ "-" + getDataType()+ "-" + getCategory()+ "-" + getSize();        
+  }
+}
+}
+PARSER_END(AnalizadorL)
+
+TOKEN:{ 
+<OPIGUAL: "="> 
+} 
+
+TOKEN:{ 
+<OPDESIGUAL: "!">
+} 
+
+TOKEN:{ 
+<OPPUNTO: ".">
+} 
+
+TOKEN:{ 
+<OPDIVICION: "/">
+} 
+
+TOKEN:{ 
+<OPMULTIPLICACION: "*">
+} 
+
+TOKEN:{ 
+<OPRESTA: "-"> 
+} 
+
+TOKEN :{ 
+<OPSUMA: "+"> 
+} 
+TOKEN:{ 
+<OPMAYORIGUALQ: ">=">
+}
+TOKEN: {
+<OPCOMA: ","> 
+}
+TOKEN:{ 
+<OPMENORIGUALQ: "<=">
+} 
+TOKEN:{ 
+<OPMAYORQ: ">">
+} 
+TOKEN:{ 
+<OPMENORQ: "<">
+} 
+TOKEN:{ 
+<OPAND: "&&">
+} 
+TOKEN:{ 
+<OPOR: "||">
+} 
+TOKEN:{ 
+<NUMENTEROS: ( ["0"-"9"] )+ >
+} 
+TOKEN:{ 
+<NUMREALES: (["0"-"9"])+<OPPUNTO>(["0"-"9"])+>
+} 
+ 
+
+SKIP : {
+	"/*": COMMULTIL
+} 
+<COMMULTIL> SKIP : {
+	"*/" : DEFAULT
+}
+<COMMULTIL> MORE : {
+	<~[]>
+}
+SKIP: {
+	"//" :COMUNIL
+}
+<COMUNIL> SKIP:{
+	"\n" : DEFAULT
+}
+<COMUNIL> MORE:{
+	<~[]>
+}
+
+// agrupamiento ---------------------------------------------------------------------
+TOKEN:{ 
+<CORCHETEA: "[">  
+} 
+TOKEN:{ 
+ <CORCHETEC: "]"> 
+} 
+TOKEN:{ 
+<PARENTESISA: "(">  
+} 
+TOKEN:{ 
+<PARENTESISC: ")"> 
+} 
+TOKEN:{ 
+<LLAVEA: "{"> 
+} 
+TOKEN:{ 
+<LLAVEC: "}"> 
+} 
+TOKEN:{ 
+<PUNTOYCOMA: ";"> 
+} 
+//palabras reservadas ------------------------------------------------------------------------------
+TOKEN:{ 
+<PENTERO: "int"> 
+}
+TOKEN:{ 
+<PCLASE: "class"> 
+} 
+TOKEN:{ 
+<PPUBLICO: "public"> 
+} 
+TOKEN:{ 
+<PMAIN: "main"> 
+} 
+TOKEN:{ 
+<PMETODO: "void"> 
+} 
+TOKEN:{ 
+<PCADENA: "String"> 
+} 
+TOKEN:{ 
+<PREGRESO: "return">
+} 
+TOKEN:{ 
+<PEXTENDS: "extends"> 
+} 
+TOKEN:{ 
+<PBOLEANO: "boolean">
+} 
+TOKEN:{ 
+<PFLOTANTE: "float">
+} 
+TOKEN:{ 
+<PIF: "if">
+} 
+TOKEN:{ 
+<PELSE: "else">
+} 
+TOKEN:{ 
+<PMIENTRAS: "while">
+} 
+TOKEN:{ 
+<PVERDAD: "true">
+} 
+TOKEN:{ 
+<PFALSO: "false">
+} 
+TOKEN:{ 
+<PESTE: "this">
+} 
+TOKEN:{ 
+<PNUEVO: "new"> 
+} 
+TOKEN: {
+	<PLENGTH: "length">
+}
+
+TOKEN:{
+<PSTATIC: "static">
+}
+TOKEN:{ 
+<PIMPRESION: "System.out.println">
+} 
+TOKEN:{ 
+<ID: ["a"-"z" , "A"-"Z"] ( ["a"-"z", "A"-"Z", "0"-"9", "_"] )* >
+} 
+
+//deteccion de errores ------------------------------------------------------------------------------
+
+SPECIAL_TOKEN:{
+<DESNOVAL1: ( ["."] )+(["0"-"9"])+ | (["0"-"9"])+( ["."] )+ | (["."])+(["0"-"9"])+["."](["."])*(["0"-"9"])+(["."])* | (["."])*(["0"-"9"])+["."](["."])+(["0"-"9"])+(["."])* | (["."])*(["0"-"9"])+["."](["."])*(["0"-"9"])+(["."])+>{System.out.println(matchedToken.beginLine+":Decimal no valido: " + image);}
+}
+SPECIAL_TOKEN:{
+<IDNOVAL: (["0"-"9"])+("_")*<ID>>{System.out.println(matchedToken.beginLine+": Identificador mal construido: "+image);}
+}
+SPECIAL_TOKEN:{
+	<IDNOV: ("_")<ID>>{System.out.println(matchedToken.beginLine+": Identificador mal construido: "+image);}
+}
+
+SKIP:
+{
+" " | "\t" | "\n" | "\r"
+}
+
+SPECIAL_TOKEN:{<~[]> {System.out.println("Error en la línea "+matchedToken.beginLine+" simbolo no valido: "+image);}}
+
+// void unaExpresion(): {}
+// {
+// (<OPIGUAL> | <OPDESIGUAL> | <OPPUNTO> | <OPDIVICION> | <OPMULTIPLICACION> | <OPRESTA> | <OPSUMA> | <OPMAYORIGUALQ> | <OPMENORIGUALQ> | <OPMAYORQ> | <OPMENORQ> | <OPAND> | <OPOR> | <NUMENTEROS> | <NUMREALES> | <CORCHETEA> | <CORCHETEC> | <PARENTESISA> | <PARENTESISC> | <LLAVEA> | <LLAVEC> | <PUNTOYCOMA> | <PENTERO> | <PCLASE> | <PPUBLICO> | <PMAIN> | <PMETODO> | <PCADENA> | <PREGRESO> | <PEXTENDS> | <PBOLEANO> | <PFLOTANTE> | <PIF> | <PELSE> | <PMIENTRAS> | <PVERDAD> | <PFALSO> | <PESTE> | <PNUEVO> | <PIMPRESION> | <PSTATIC> | <OPCOMA> | <ID>)
+// }
+
+//Analisis Sintactico -----------------------------------------------------------------------------------------
+
+void Program ():{}
+{
+	MainClass() (ClassDeclaration())* <EOF>
+}
+void MainClass ():{}
+{
+	<PCLASE> <ID> {String image=token.image; agregar(image, "void", "clase", "0");} <LLAVEA> <PPUBLICO> <PSTATIC> <PMETODO> <PMAIN> <PARENTESISA> <PCADENA> <CORCHETEA> <CORCHETEC> <ID>{image=token.image;agregar(image, "void", "arreglo", "0");} <PARENTESISC> <LLAVEA> Statement() <LLAVEC> <LLAVEC>
+}
+void ClassDeclaration():{}
+{
+	<PCLASE> <ID> {String image=token.image;agregar(image, "void", "clase", "0");}( <PEXTENDS> <ID> )? <LLAVEA> ( VarDeclaration() )* ( MethodDeclaration() )* <LLAVEC>
+}
+void VarDeclaration():{String type=""; String image; int tam=0; String category="";}
+{
+	type=Type() <ID> {image=token.image;
+if(type.equals("arreglo-float")){category="arreglo"; agregar(image, "float", "arreglo", tam+"");} 
+else if(type.equals("arreglo-int")){category="arreglo"; agregar(image, "int", "arreglo", tam+"");}
+else{ category="variable"; agregar(image, type, "variable", "0"); }
+}<PUNTOYCOMA>
+}
+void MethodDeclaration():{String type; int tam=0;}
+{
+	<PPUBLICO> type=Type() <ID> {String imageMethod=token.image;}<PARENTESISA> ( type=Type() <ID> {String image=token.image;
+if(type.equals("arreglo-float"))agregar(image, "float", "arreglo", "0"); 
+else if(type.equals("arreglo-int"))agregar(image, "int", "arreglo", "0");
+else agregar(image, type, "variable", "0"); 
+tam++;
+}( <OPCOMA> type=Type() <ID>{image=token.image;
+if(type.equals("arreglo-float"))agregar(image, "float", "arreglo", "0"); 
+else if(type.equals("arreglo-int"))agregar(image, "int", "arreglo", "0");
+else agregar(image, type, "variable", "0"); 
+tam++;
+} )* )?
+{agregar(imageMethod, type, "funcion", tam+"");}
+<PARENTESISC> <LLAVEA> ( LOOKAHEAD(2) VarDeclaration() )* ( Statement() )* <PREGRESO> Expression() <PUNTOYCOMA> <LLAVEC>
+
+}
+String Type():{}
+{
+	LOOKAHEAD(2) <PENTERO> <CORCHETEA> <CORCHETEC>{return "arreglo-int";}
+	| <PBOLEANO>{return "boolean";}
+	| <PENTERO> {return "int";}
+	| LOOKAHEAD(2) <PFLOTANTE> <CORCHETEA> <CORCHETEC>{return "arreglo-float";}
+	| <PFLOTANTE>{return "float";}
+	| LOOKAHEAD(2)<ID>{return token.image;}
+}
+void Statement():{}
+{	
+	LOOKAHEAD(2)  <LLAVEA> (Statement())* <LLAVEC>
+	| <PIF> <PARENTESISA> Expression() <PARENTESISC> Statement() <PELSE> Statement()
+	| <PMIENTRAS> <PARENTESISA> Expression() <PARENTESISC> Statement() 
+	| <PIMPRESION> <PARENTESISA> Expression() <PARENTESISC> <PUNTOYCOMA>
+	| LOOKAHEAD(2) <ID> <OPIGUAL> Expression() <PUNTOYCOMA> 
+	| <ID> <CORCHETEA> Expression() <CORCHETEC> <OPIGUAL> Expression() <PUNTOYCOMA>
+}
+void Expression():{}
+{
+	 <NUMENTEROS> Exp()
+	| <PVERDAD> Exp() | <PFALSO> Exp() 
+	| <ID> Exp() 
+	| <PESTE>  Exp() 
+	| LOOKAHEAD(2) <PNUEVO> <PENTERO> <CORCHETEA> Expression() <CORCHETEC> Exp() 
+	| <PNUEVO> <ID> <PARENTESISA> <PARENTESISC> Exp() 
+	| <OPDESIGUAL> Expression() Exp() |<PARENTESISA> Expression() <PARENTESISC> Exp()  
+}
+void Exp():{}
+{
+	(LOOKAHEAD(3)(<OPAND> | <OPMENORQ> | <OPSUMA> | <OPRESTA> | <OPMULTIPLICACION>) Expression() Exp() 
+	|<CORCHETEA> Expression() <CORCHETEC> Exp() 
+	|LOOKAHEAD(2)<OPPUNTO> <PLENGTH> Exp() 
+	|<OPPUNTO> <ID> <PARENTESISA> ( Expression() ( <OPCOMA> Expression() )* )? <PARENTESISC> Exp())*
+}
