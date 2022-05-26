@@ -13,7 +13,12 @@ class Fac {
         int num_aux;
         if (num < 1) num_aux = 1;
         else num_aux = num * (this.ComputeFac(num - 1));
-        e = 10;
+        int[] a;
+        a = new int[2];
+        int t;
+        t=4 + 4.4;
+        boolean e;
+        e = true;
         return num_aux;
     }
-}
+} 
