@@ -22,14 +22,11 @@ public static void agregar(String id, String tipoDato, String categoria, String 
     tabla.put(id,vr);
 }
 
-// public static void busqueda(String id){
-// if (tabla.containsKey(id)) {
-//     Variable varEncontrada = (Variable) tabla.get(id);
-//     System.out.println("Encontrada: "+varEncontrada.toString());
-// }else{
-//      System.out.println("No existe");
-// }
-// }
+public static void busqueda(String id){
+if (!tabla.containsKey(id)) {
+    System.out.println("No existe "+id);
+}
+}
 
 // public static void eliminar(String id){
 //     tabla.remove(id);
@@ -269,7 +266,7 @@ void Program ():{}
 }
 void MainClass ():{}
 {
-	<PCLASE> <ID> {String image = token.image; agregar(image, "void", "clase", "0");} <LLAVEA> <PPUBLICO> <PSTATIC> <PMETODO> <PMAIN> <PARENTESISA> <PCADENA> <CORCHETEA> <CORCHETEC> <ID>{image=token.image;agregar(image, "void", "arreglo", "0");} <PARENTESISC> <LLAVEA> Statement() <LLAVEC> <LLAVEC>
+	<PCLASE> <ID> {String image = token.image; agregar(image, "void", "clase", "0");} <LLAVEA> <PPUBLICO> <PSTATIC> <PMETODO> <PMAIN> <PARENTESISA> <PCADENA> <CORCHETEA> <CORCHETEC> <ID>{image=token.image;agregar(image, "void", "arreglo", "0");} <PARENTESISC> <LLAVEA> ( LOOKAHEAD(3)Statement()| VarDeclaration() |  MethodDeclaration() )* <LLAVEC> <LLAVEC>
 }
 void ClassDeclaration():{}
 {
@@ -315,7 +312,7 @@ void Statement():{}
 	| <PIF> <PARENTESISA> Expression() <PARENTESISC> Statement() <PELSE> Statement()
 	| <PMIENTRAS> <PARENTESISA> Expression() <PARENTESISC> Statement() 
 	| <PIMPRESION> <PARENTESISA> Expression() <PARENTESISC> <PUNTOYCOMA>
-	| LOOKAHEAD(2) <ID> <OPIGUAL> Expression() <PUNTOYCOMA> 
+	| LOOKAHEAD(2) <ID> {String id=token.image; busqueda(id);} <OPIGUAL> Expression() <PUNTOYCOMA> 
 	| <ID> <CORCHETEA> Expression() <CORCHETEC> <OPIGUAL> Expression() <PUNTOYCOMA>
 }
 void Expression():{}
@@ -330,7 +327,7 @@ void Expression():{}
 }
 void Exp():{}
 {
-	(LOOKAHEAD(3)(<OPAND> | <OPMENORQ> | <OPSUMA> | <OPRESTA> | <OPMULTIPLICACION>) Expression() Exp() 
+	((<OPAND> | <OPMENORQ> | <OPSUMA> | <OPRESTA> | <OPMULTIPLICACION>) Expression() Exp() 
 	|<CORCHETEA> Expression() <CORCHETEC> Exp() 
 	|LOOKAHEAD(2)<OPPUNTO> <PLENGTH> Exp() 
 	|<OPPUNTO> <ID> <PARENTESISA> ( Expression() ( <OPCOMA> Expression() )* )? <PARENTESISC> Exp())*
