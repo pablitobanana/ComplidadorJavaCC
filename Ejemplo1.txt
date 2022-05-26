@@ -12,12 +12,8 @@ class Fac {
         int num_aux;
         if (num < 1) num_aux = 1;
         else num_aux = num * (this.ComputeFac(num - 1));
-        float t;
-        t= 42.4 + 24.4 ;
-        boolean e;
-        e = true && true;
-        int p;
-        p= t + 4;
+        int fd;
+        fd = ComputeFac(4);
         return num_aux;
     }
 } 

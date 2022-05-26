@@ -1,16 +1,13 @@
 No existe Fac
-Tipo de variable distinto en: p
 TABLA DE SIMBOLOS
 ******************************
 ID | TIPO | Categoria | Tamaño
 ******************************
-p | int | variable | 0
 Fac | void | clase | 0
-Factorial | void | clase | 0
-ComputeFac | int | funcion | 1
-num | int | variable | 0
-e | boolean | variable | 0
-num_aux | int | variable | 0
 a | void | arreglo | 0
-t | float | variable | 0
+num | int | variable | 0
+fd | int | variable | 0
+num_aux | int | variable | 0
+ComputeFac | int | funcion | 1
+Factorial | void | clase | 0
 Analisis Terminado.

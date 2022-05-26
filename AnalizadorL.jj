@@ -11,6 +11,7 @@ import java.lang.*;
 		static Hashtable<String,Object> tabla = new Hashtable<String,Object>();
     static String initType = "";
     static String tipoInit = "";
+    static String idEl = "";
 		public static void main (String[] args) throws ParseException{
 		AnalizadorL anLex = new AnalizadorL(System.in);
 		anLex.Program();
@@ -18,7 +19,7 @@ import java.lang.*;
 		System.out.println("Analisis Terminado.");
 		}
 
-public static void agregar(String id, String tipoDato, String categoria, String size){
+public static void agregar(String id, String tipoDato, String categoria, int size){
     Variable vr = new Variable(id , tipoDato, categoria, size);
     tabla.put(id,vr);
 }
@@ -48,8 +49,9 @@ public static void printTable(){
 }
 
 public static class Variable {
- String id, tipoDato, categoria, size;
-	public Variable(String id, String tipoDato, String categoria, String size){
+ String id, tipoDato, categoria;
+ int size;
+	public Variable(String id, String tipoDato, String categoria, int size){
 		this.id=id;
 		this.tipoDato=tipoDato;
         this.categoria=categoria;
@@ -65,10 +67,12 @@ public static class Variable {
     String getCategoria(){
         return categoria;
     }
-    String getSize(){
+    int getSize(){
         return size;
     }
-
+    void setSize(int sd){
+        this.size = sd;
+    }
     public String toString(){
     return getId()+ " | " + getTipoDato()+ " | " + getCategoria()+ " | " + getSize();        
   }
@@ -271,34 +275,34 @@ void Program ():{}
 }
 void MainClass ():{}
 {
-	<PCLASE> <ID> {String image = token.image; agregar(image, "void", "clase", "0");} <LLAVEA> <PPUBLICO> <PSTATIC> <PMETODO> <PMAIN> <PARENTESISA> <PCADENA> <CORCHETEA> <CORCHETEC> <ID>{image=token.image;agregar(image, "void", "arreglo", "0");} <PARENTESISC> <LLAVEA> ( LOOKAHEAD(3)Statement()| VarDeclaration() |  MethodDeclaration() )* <LLAVEC> <LLAVEC>
+	<PCLASE> <ID> {String image = token.image; agregar(image, "void", "clase", 0);} <LLAVEA> <PPUBLICO> <PSTATIC> <PMETODO> <PMAIN> <PARENTESISA> <PCADENA> <CORCHETEA> <CORCHETEC> <ID>{image=token.image;agregar(image, "void", "arreglo", 0);} <PARENTESISC> <LLAVEA> ( LOOKAHEAD(3)Statement()| VarDeclaration() |  MethodDeclaration() )* <LLAVEC> <LLAVEC>
 }
 void ClassDeclaration():{}
 {
-	<PCLASE> <ID> {String image=token.image; agregar(image, "void", "clase", "0");}( <PEXTENDS> <ID> )? <LLAVEA> ( VarDeclaration() )* ( MethodDeclaration() )* <LLAVEC>
+	<PCLASE> <ID> {String image=token.image; agregar(image, "void", "clase", 0);}( <PEXTENDS> <ID> )? <LLAVEA> ( VarDeclaration() )* ( MethodDeclaration() )* <LLAVEC>
 }
-void VarDeclaration():{String type=""; String image; String tam="0";}
+void VarDeclaration():{String type=""; String image;}
 {
 	type=Type() <ID> {image=token.image;
-if(type.equals("int[]")){agregar(image, "int[]", "arreglo", tam+"");} 
-else if(type.equals("float[]")){agregar(image, "float[]", "arreglo", tam+"");}
-else{ agregar(image, type, "variable", "0"); }
+if(type.equals("int[]")){agregar(image, "int[]", "arreglo", 0);} 
+else if(type.equals("float[]")){agregar(image, "float[]", "arreglo", 0);}
+else{ agregar(image, type, "variable", 0); }
 }<PUNTOYCOMA>
 }
-void MethodDeclaration():{String type; int tam=0;}
+void MethodDeclaration():{String type;int tam=0;}
 {
 	<PPUBLICO> type=Type() <ID> {String imageMethod=token.image;}<PARENTESISA> (type=Type() <ID> {String image=token.image;
-if(type.equals("int[]"))agregar(image, "int[]", "arreglo", "0"); 
-else if(type.equals("float[]"))agregar(image, "float[]", "arreglo", "0");
-else agregar(image, type, "variable", "0"); 
+if(type.equals("int[]"))agregar(image, "int[]", "arreglo", 0); 
+else if(type.equals("float[]"))agregar(image, "float[]", "arreglo", 0);
+else agregar(image, type, "variable", 0); 
 tam++;
 }( <OPCOMA> type=Type() <ID>{image=token.image;
-if(type.equals("int[]"))agregar(image, "int[]", "arreglo", "0"); 
-else if(type.equals("float[]"))agregar(image, "float[]", "arreglo", "0");
-else agregar(image, type, "variable", "0"); 
+if(type.equals("int[]"))agregar(image, "int[]", "arreglo", tam); 
+else if(type.equals("float[]"))agregar(image, "float[]", "arreglo", tam);
+else agregar(image, type, "variable",0); 
 tam++;
 } )* )?
-{agregar(imageMethod, type, "funcion", tam+"");}
+{agregar(imageMethod, type, "funcion", tam);}
 <PARENTESISC>
 
 <LLAVEA> ( LOOKAHEAD(2) VarDeclaration() |  Statement() )* <PREGRESO> Expression() <PUNTOYCOMA> <LLAVEC>
@@ -319,8 +323,9 @@ void Statement():{String tipExp;}
 	| <PIF> <PARENTESISA> Expression() <PARENTESISC> Statement() <PELSE> Statement()
 	| <PMIENTRAS> <PARENTESISA> Expression() <PARENTESISC> Statement() 
 	| <PIMPRESION> <PARENTESISA> Expression() <PARENTESISC> <PUNTOYCOMA>
-	| LOOKAHEAD(2) <ID> {String id=token.image;String vr = busqueda(id); initType = vr;tipoInit = initType;} <OPIGUAL> tipExp=Expression() {if(!vr.equals(tipExp) && !vr.equals(" ") ){System.out.println("Tipo de variable distinto en: " +id);}} <PUNTOYCOMA> 
-	| <ID> {String id=token.image;String vr = busqueda(id);initType = vr;tipoInit = initType;} <CORCHETEA> Expression() <CORCHETEC><OPIGUAL>tipExp=Expression() {if(!vr.equals(tipExp) && !vr.equals(" ") ){System.out.println("Tipo de variable distinto en: " +id);}}<PUNTOYCOMA>
+	| LOOKAHEAD(2) <ID> {String id=token.image;String vr = busqueda(id); initType = vr;tipoInit = initType;idEl=id;} <OPIGUAL> tipExp=Expression() {if(!vr.equals(tipExp) && !vr.equals(" ") ){System.out.println("Tipo de variable no compatibles: " +id);}} <PUNTOYCOMA> 
+  | <ID> {String id=token.image;String vr = busqueda(id);if(vr.equals("int[]")){vr = "int";}else{vr = "float";}} <CORCHETEA> <NUMENTEROS> {int valor = Integer.parseInt(token.image); Variable vari = (Variable) tabla.get(id);if(vari.getSize() <= valor){System.out.println("Lugar "+valor+" del arreglo inaccesible");}} <CORCHETEC><OPIGUAL>tipExp=Expression() 
+  {if(!vr.equals(tipExp) && !vr.equals(" ") ){System.out.println("Tipo de variable distinto en: " +id);}}<PUNTOYCOMA>
 }
 String Expression():{}
 {
@@ -331,10 +336,9 @@ String Expression():{}
      | <PFALSO> {if(!initType.equals("boolean")){tipoInit = "boolean";}}Exp()   
      | <ID>{String id = token.image; String vr = busqueda(id);{if(!initType.equals(vr)){ tipoInit = vr; }} } Exp()  
      | <PESTE> Exp() 
-     | LOOKAHEAD(2) <PNUEVO> <PENTERO> <CORCHETEA> Expression() <CORCHETEC>{if(!initType.equals("int[]"))tipoInit = "int[]";} Exp()
-     | LOOKAHEAD(2) <PNUEVO> <PFLOTANTE> <CORCHETEA> Expression() <CORCHETEC> {if(!initType.equals("float[]"))tipoInit = "float[]";}Exp()
-     | <PNUEVO> <ID> {String id1 = token.image; String vr1 = busqueda(id1);if(!initType.equals(vr1))tipoInit = vr1;} <PARENTESISA> <PARENTESISC> Exp()
-     | <OPDESIGUAL> Expression()Exp()
+     | LOOKAHEAD(2) <PNUEVO> <PENTERO> {if(!initType.equals("int[]")){tipoInit = "int[]";}}<CORCHETEA><NUMENTEROS>{String i = token.image;tabla.remove(idEl);int trans = Integer.parseInt(i); agregar(idEl,"int[]","arreglo",trans);}<CORCHETEC> Exp()
+     | LOOKAHEAD(2) <PNUEVO> <PFLOTANTE> {if(!initType.equals("float[]")){tipoInit = "float[]";}}<CORCHETEA><NUMENTEROS>{String i = token.image;tabla.remove(idEl);int trans = Integer.parseInt(i);agregar(idEl,"float[]","arreglo",trans);}<CORCHETEC>Exp()
+     | <PNUEVO> <ID> {String id1 = token.image; String vr1 = busqueda(id1);if(!initType.equals(vr1)){ tipoInit = vr1 ;}} <PARENTESISA> <PARENTESISC> Exp() | <OPDESIGUAL> Expression()Exp()
      |<PARENTESISA> tipoInit=Expression() <PARENTESISC> Exp() 
     )
     {return tipoInit;}
@@ -344,5 +348,7 @@ void Exp():{}
 	((<OPAND> | <OPMENORQ> | <OPSUMA> | <OPRESTA> | <OPMULTIPLICACION>) Expression() Exp() 
 	|<CORCHETEA> Expression() <CORCHETEC> Exp() 
 	|LOOKAHEAD(2)<OPPUNTO> <PLENGTH> Exp() 
-	|<OPPUNTO> <ID> <PARENTESISA> ( Expression() ( <OPCOMA> Expression() )* )? <PARENTESISC> Exp())*
+	|<OPPUNTO> <ID> <PARENTESISA> ( Expression() ( <OPCOMA> Expression() )* )? <PARENTESISC> Exp()
+  |<PARENTESISA> ( Expression() ( <OPCOMA> Expression() )* )? <PARENTESISC> Exp())*
+
 }
