@@ -9,7 +9,8 @@ import java.util.*;
 import java.lang.*;
 	public class AnalizadorL{
 		static Hashtable<String,Object> tabla = new Hashtable<String,Object>();
-
+    static String initType = "";
+    static String tipoInit = "";
 		public static void main (String[] args) throws ParseException{
 		AnalizadorL anLex = new AnalizadorL(System.in);
 		anLex.Program();
@@ -318,21 +319,25 @@ void Statement():{String tipExp;}
 	| <PIF> <PARENTESISA> Expression() <PARENTESISC> Statement() <PELSE> Statement()
 	| <PMIENTRAS> <PARENTESISA> Expression() <PARENTESISC> Statement() 
 	| <PIMPRESION> <PARENTESISA> Expression() <PARENTESISC> <PUNTOYCOMA>
-	| LOOKAHEAD(2) <ID> {String id=token.image;String vr = busqueda(id);} <OPIGUAL> tipExp=Expression() {if(!vr.equals(tipExp) && !vr.equals(" ") ){System.out.println("Tipo de variable distinto en: " +id);}} <PUNTOYCOMA> 
-	| <ID> {String id=token.image;String vr = busqueda(id);} <CORCHETEA> Expression() <CORCHETEC> <OPIGUAL> tipExp=Expression() {if(!vr.equals(tipExp) && !vr.equals(" ") ){System.out.println("Tipo de variable distinto en: " +id);}}<PUNTOYCOMA>
+	| LOOKAHEAD(2) <ID> {String id=token.image;String vr = busqueda(id); initType = vr;tipoInit = initType;} <OPIGUAL> tipExp=Expression() {if(!vr.equals(tipExp) && !vr.equals(" ") ){System.out.println("Tipo de variable distinto en: " +id);}} <PUNTOYCOMA> 
+	| <ID> {String id=token.image;String vr = busqueda(id);initType = vr;tipoInit = initType;} <CORCHETEA> Expression() <CORCHETEC><OPIGUAL>tipExp=Expression() {if(!vr.equals(tipExp) && !vr.equals(" ") ){System.out.println("Tipo de variable distinto en: " +id);}}<PUNTOYCOMA>
 }
 String Expression():{}
 {
-     <NUMENTEROS> Exp(){return "int";}
-     |<NUMREALES> Exp() {return "float";}
-     |  ( <PVERDAD> Exp() | <PFALSO> Exp() ) {return "boolean";}  
-     | <ID>{String id = token.image; String vr = busqueda(id); } Exp() {return vr;} 
-     | <PESTE> Exp() { return " ";}
-     | LOOKAHEAD(2) <PNUEVO> <PENTERO> <CORCHETEA> Expression() <CORCHETEC> Exp(){return "int[]";}
-     | LOOKAHEAD(2) <PNUEVO> <PFLOTANTE> <CORCHETEA> Expression() <CORCHETEC> Exp(){return "float[]";}
-     | <PNUEVO> <ID> {String id1 = token.image; String vr1 = busqueda(id1);} <PARENTESISA> <PARENTESISC> Exp(){ return vr1;}
-     | <OPDESIGUAL> Expression()Exp() {return " ";}
-     |<PARENTESISA> Expression() <PARENTESISC>  Exp(){return " ";} 
+    (
+     <NUMREALES>{if(!initType.equals("float")){tipoInit = "float";}} Exp() 
+     |<NUMENTEROS>{if(!initType.equals("int")){tipoInit = "int";}} Exp()
+     | <PVERDAD> {if(!initType.equals("boolean")){tipoInit = "boolean";}}Exp() 
+     | <PFALSO> {if(!initType.equals("boolean")){tipoInit = "boolean";}}Exp()   
+     | <ID>{String id = token.image; String vr = busqueda(id);{if(!initType.equals(vr)){ tipoInit = vr; }} } Exp()  
+     | <PESTE> Exp() 
+     | LOOKAHEAD(2) <PNUEVO> <PENTERO> <CORCHETEA> Expression() <CORCHETEC>{if(!initType.equals("int[]"))tipoInit = "int[]";} Exp()
+     | LOOKAHEAD(2) <PNUEVO> <PFLOTANTE> <CORCHETEA> Expression() <CORCHETEC> {if(!initType.equals("float[]"))tipoInit = "float[]";}Exp()
+     | <PNUEVO> <ID> {String id1 = token.image; String vr1 = busqueda(id1);if(!initType.equals(vr1))tipoInit = vr1;} <PARENTESISA> <PARENTESISC> Exp()
+     | <OPDESIGUAL> Expression()Exp()
+     |<PARENTESISA> tipoInit=Expression() <PARENTESISC> Exp() 
+    )
+    {return tipoInit;}
 }
 void Exp():{}
 {
