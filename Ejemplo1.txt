@@ -12,6 +12,17 @@ class Fac {
         int num_aux;
         if (num < 1) num_aux = 1;
         else num_aux = num * (this.ComputeFac(num - 1));
+        int a1; /*Variable INT*/
+        a1 = 10;
+        float varF;
+        varF = 10+10.3;
+        int[] b;
+        b = new int[9];
+        b[10] = 10 + a1; /* error de desbordamiento de arreglo*/
+        b[6] = 10.4; /*error de tipo de variable*/
+        b[5] = 10 + a1;
+        /*float[] c1;
+        c1[] = */
         int fd;
         fd = ComputeFac(4);
         return num_aux;

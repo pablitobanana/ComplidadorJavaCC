@@ -1,13 +1,1 @@
 No existe Fac
-TABLA DE SIMBOLOS
-******************************
-ID | TIPO | Categoria | Tamaño
-******************************
-Fac | void | clase | 0
-a | void | arreglo | 0
-num | int | variable | 0
-fd | int | variable | 0
-num_aux | int | variable | 0
-ComputeFac | int | funcion | 1
-Factorial | void | clase | 0
-Analisis Terminado.

@@ -1,12 +1,37 @@
+No existe BS
+Tipo de valor no compatibles: aux01
+Lugar number[j] del arreglo inaccesible
 TABLA DE SIMBOLOS
 ******************************
 ID | TIPO | Categoria | Tamaño
 ******************************
-Fac | void | clase | 0
-a | void | arreglo | 0
+number | int[] | arreglo | 0
+num2 | int | variable | 0
+num1 | int | variable | 0
+medium | int | variable | 0
+left | int | variable | 0
 num | int | variable | 0
-num_aux | int | variable | 0
-ComputeFac | int | funcion | 1
-Factorial | void | clase | 0
-q | int | variable | 0
+Search | int | funcion | 1
+Print | int | funcion | 0
+var_cont | boolean | variable | 0
+Start | int | funcion | 1
+bs01 | boolean | variable | 0
+Compare | int | funcion | 2
+sz | int | variable | 0
+retval | boolean | variable | 0
+size | int | variable | 0
+BS | void | clase | 0
+k | int | variable | 0
+j | int | variable | 0
+count02 | int | variable | 0
+count01 | int | variable | 0
+Div | int | funcion | 1
+BinarySearch | void | clase | 0
+right | int | variable | 0
+aux03 | int | variable | 0
+a | String | arreglo | 0
+aux02 | int | variable | 0
+aux01 | int | variable | 0
+nt | int | variable | 0
+Init | int | funcion | 1
 Analisis Terminado.
